@@ -164,14 +164,11 @@ def cached_name_match(target_name, entities_tuple):
                     return True
     return False
 
-def is_name_match(target, entities):
-    parts = target.lower().split()
-    for ent in entities:
-        if ent["label"]=="PERSON":
-            txt = ent["text"].lower()
-            if all(p in txt for p in parts):
-                return True
-    return False
+
+def is_name_match(target_name, entities):
+    entities_tuple = tuple((ent["text"], ent["label"]) for ent in entities)
+    return cached_name_match(target_name, entities_tuple)
+
 
 
 def merge_and_dedupe(list_of_lists):
@@ -219,21 +216,61 @@ def run_osint_with_progress(name, city, extras, search_id):
     update(75, "NLP...")
     combined = enrich_with_nlp(combined)
 
-    filtered_results=[]
-    name_low = name.lower()
-    tokens = name_low.split()
-    regex = re.compile(r"\b"+" ".join(tokens)+r"\b",re.I) if len(tokens)>=2 else re.compile(r"\b"+tokens[0]+r"\b",re.I)
+       # ---------- Improved Filtering ----------
+    filtered_results = []
 
-    for r in combined:
-        raw = (r.get("title","")+" "+r.get("snippet","")).lower()
-        if is_name_match(name, r["entities"])\
-        or regex.search(raw)\
-        or fuzz.partial_ratio(name_low,raw)>=90\
-        or all(fuzz.partial_ratio(tok,raw)>=85 for tok in tokens if tok):
-            filtered_results.append(r)
+    name_tokens = [t for t in name.split() if t.strip()]
+    name_lower   = " ".join(name_tokens).lower()
+
+    if name_tokens:
+        if len(name_tokens) >= 2:
+            full_name_regex = re.compile(r'\b' + r'\s+'.join(map(re.escape, name_tokens)) + r'\b', re.I)
+        else:
+            full_name_regex = re.compile(r'\b' + re.escape(name_tokens[0]) + r'\b', re.I)
+    else:
+        full_name_regex = None
+
+    for result in combined:
+        title   = result.get("title",   "")
+        snippet = result.get("snippet", "")
+        raw     = f"{title} {snippet}"
+        raw_low = raw.lower()
+
+    # 1 spaCy entity
+        if is_name_match(name, result["entities"]):
+            filtered_results.append(result)
+            continue
+
+    # 2 exact phrase
+        if full_name_regex and (full_name_regex.search(title) or full_name_regex.search(snippet)):
+            filtered_results.append(result)
+            print(f"✅ Included via exact phrase: {title}")
+            continue
+
+    # 3 fuzzy full‑name match (≥90)
+        if fuzz.partial_ratio(name_lower, raw_low) >= 90:
+            filtered_results.append(result)
+            print(f"✅ Included via fuzzy full‑name: {title}")
+            continue
+
+    # 4 fuzzy token‑by‑token (every token ≥85)
+        token_hits = [
+            fuzz.partial_ratio(tok.lower(), raw_low) >= 85
+            for tok in name_tokens
+            if tok
+        ]
+        if token_hits and all(token_hits):
+            filtered_results.append(result)
+            print(f"✅ Included via fuzzy tokens: {title}")
+        else:
+            print(f"⚠ Skipped irrelevant result: {title}")
 
     if not filtered_results:
-        return [{"error":"No matching person"}]
+        print("❌ No person match found in any search results.")
+        return [{"error": "No data found matching the person. They may not have a public profile or presence."}]
+        
+
+
 
     update(85, "AI summary...")
     top = filtered_results[:1]
