@@ -1,89 +1,328 @@
-import { useState, useEffect } from 'react';
+
+// import { useState } from 'react';
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { Card } from "@/components/ui/card";
+// import { Search, ArrowLeft, FileText, User } from "lucide-react";
+// import { useNavigate } from 'react-router-dom';
+// import { useToast } from "@/hooks/use-toast";
+
+// const SearchPage = () => {
+//   const navigate = useNavigate();
+//   const { toast } = useToast();
+//   const [formData, setFormData] = useState({
+//     name: '',
+//     city: '',
+//     extraTerms: ''
+//   });
+//   const [isSearching, setIsSearching] = useState(false);
+//   const [hasResults, setHasResults] = useState(false);
+//   const [personData, setPersonData] = useState<any>(null);
+//   const [currentQuote, setCurrentQuote] = useState(0);
+
+//   const osintQuotes = [
+//     "Information is the currency of the digital age.",
+//     "In data we trust, in ethics we must.",
+//     "Intelligence gathering with moral boundaries.",
+//     "Knowledge is power, responsibility is wisdom.",
+//     "The art of finding needles in digital haystacks.",
+//     "Privacy and transparency in perfect balance."
+//   ];
+
+//   // Replace the handleSearch function with this:
+// const handleSearch = async () => {
+//   setIsSearching(true);
+//   setHasResults(false);
+  
+//   // Quote rotation during search
+//   const quoteInterval = setInterval(() => {
+//     setCurrentQuote((prev) => (prev + 1) % osintQuotes.length);
+//   }, 2000);
+
+//   try {
+//     const response = await fetch('http://localhost:6969/osint', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify(formData)
+//     });
+    
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+    
+//     const data = await response.json();
+    
+//     clearInterval(quoteInterval);
+//     setIsSearching(false);
+//     setHasResults(true);
+//     setPersonData(data.data);
+    
+//     toast({
+//       title: "Search Completed",
+//       description: `Found ${data.data.totalResults} results for ${formData.name}`
+//     });
+    
+//   } catch (error) {
+//     clearInterval(quoteInterval);
+//     setIsSearching(false);
+//     toast({
+//       title: "Search Failed",
+//       description: `Unable to retrieve information: ${error.message}`,
+//       variant: "destructive"
+//     });
+//   }
+// };
+
+// // Replace the handleGenerateReport function with this:
+// const handleGenerateReport = async () => {
+//   if (!personData) {
+//     toast({
+//       title: "No Data Available",
+//       description: "Please perform a search first to generate a report.",
+//       variant: "destructive"
+//     });
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch('http://localhost:6969/generate-report', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ personData })
+//     });
+    
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+    
+//     const data = await response.json();
+    
+//     toast({
+//       title: "Report Generated",
+//       description: `Report saved as: ${data.reportPath}`
+//     });
+    
+//   } catch (error) {
+//     toast({
+//       title: "Report Generation Failed",
+//       description: `Unable to generate report: ${error.message}`,
+//       variant: "destructive"
+//     });
+//   }
+// };
+
+//   return (
+//     <div className="min-h-screen bg-black relative overflow-hidden">
+//       {/* Purple Grid Background */}
+//       <div className="absolute inset-0 opacity-20">
+//         <div 
+//           className="w-full h-full bg-repeat opacity-40"
+//           style={{
+//             backgroundImage: `
+//               linear-gradient(rgba(147, 51, 234, 0.3) 1px, transparent 1px),
+//               linear-gradient(90deg, rgba(147, 51, 234, 0.3) 1px, transparent 1px)
+//             `,
+//             backgroundSize: '40px 40px'
+//           }}
+//         />
+//       </div>
+
+//       {/* Animated Background Nodes */}
+//       <div className="absolute inset-0 overflow-hidden">
+//         <div className="absolute top-20 left-20 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-60"></div>
+//         <div className="absolute top-40 right-32 w-1 h-1 bg-purple-300 rounded-full animate-ping opacity-40"></div>
+//         <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse opacity-50"></div>
+//         <div className="absolute top-60 left-1/2 w-1 h-1 bg-purple-400 rounded-full animate-ping opacity-30"></div>
+//         <div className="absolute bottom-20 right-20 w-2 h-2 bg-purple-300 rounded-full animate-pulse opacity-40"></div>
+//       </div>
+
+//       {/* Back Button */}
+//       <div className="absolute top-8 left-8 z-10">
+//         <Button
+//           onClick={() => navigate('/')}
+//           className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 hover:bg-gray-800/60 text-purple-200"
+//         >
+//           <ArrowLeft className="w-5 h-5 mr-2" />
+//           Back to Home
+//         </Button>
+//       </div>
+
+//       <div className="min-h-screen flex items-center justify-center p-8">
+//         <div className="w-full max-w-2xl space-y-8">
+          
+//           {/* Search Form */}
+//           <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+//             <div className="space-y-6">
+//               <div className="text-center">
+//                 <h1 className="text-3xl font-bold text-purple-400 glow-text-purple mb-2">OSINT Search</h1>
+//                 <p className="text-purple-200/70">Enter search parameters below</p>
+//               </div>
+
+//               {/* Disclaimer */}
+//               <div className="bg-red-900/20 border border-red-500/30 p-4 rounded-lg backdrop-blur-sm">
+//                 <p className="text-red-300 text-sm">
+//                   <strong>Disclaimer:</strong> Do not use this tool for stalking or illegal purposes.
+//                 </p>
+//               </div>
+
+//               <div className="space-y-4">
+//                 <div>
+//                   <Label htmlFor="name" className="text-purple-200">Name</Label>
+//                   <Input
+//                     id="name"
+//                     value={formData.name}
+//                     onChange={(e) => setFormData({...formData, name: e.target.value})}
+//                     className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+//                     placeholder="Enter target name"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <Label htmlFor="city" className="text-purple-200">City</Label>
+//                   <Input
+//                     id="city"
+//                     value={formData.city}
+//                     onChange={(e) => setFormData({...formData, city: e.target.value})}
+//                     className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+//                     placeholder="Enter city"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <Label htmlFor="extraTerms" className="text-purple-200">Extra Terms</Label>
+//                   <Input
+//                     id="extraTerms"
+//                     value={formData.extraTerms}
+//                     onChange={(e) => setFormData({...formData, extraTerms: e.target.value})}
+//                     className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+//                     placeholder="Additional search terms"
+//                   />
+//                 </div>
+//               </div>
+
+//               <Button
+//                 onClick={handleSearch}
+//                 disabled={isSearching || !formData.name}
+//                 className="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 border border-purple-400/30 backdrop-blur-sm flex items-center justify-center space-x-2"
+//               >
+//                 <Search className="w-5 h-5" />
+//                 <span>{isSearching ? 'Searching...' : 'Search'}</span>
+//               </Button>
+//             </div>
+//           </Card>
+
+//           {/* Processing Quotes */}
+//           {isSearching && (
+//             <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+//               <div className="text-center space-y-4">
+//                 <div className="w-12 h-12 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+//                 <p className="text-purple-200 text-lg italic transition-all duration-1000">
+//                   "{osintQuotes[currentQuote]}"
+//                 </p>
+//                 <p className="text-purple-300/70">Processing your request...</p>
+//               </div>
+//             </Card>
+//           )}
+
+//           {/* Summarizer Results */}
+//           {hasResults && personData && (
+//             <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+//               <div className="space-y-6">
+//                 <div className="flex items-center space-x-3">
+//                   <User className="w-6 h-6 text-purple-400" />
+//                   <h2 className="text-2xl font-bold text-purple-400">Person Summary</h2>
+//                 </div>
+                
+//                 <div className="space-y-4">
+//                   <div className="bg-purple-400/10 border border-purple-400/30 p-6 rounded-lg backdrop-blur-sm">
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+//                       <div>
+//                         <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Name</h3>
+//                         <p className="text-white text-lg">{personData.name}</p>
+//                       </div>
+//                       <div>
+//                         <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Location</h3>
+//                         <p className="text-white text-lg">{personData.location || 'Not specified'}</p>
+//                       </div>
+//                       <div>
+//                         <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Confidence</h3>
+//                         <p className="text-green-400 text-lg font-semibold">{personData.confidence}</p>
+//                       </div>
+//                       <div>
+//                         <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Last Updated</h3>
+//                         <p className="text-purple-100 text-lg">{personData.lastUpdated}</p>
+//                       </div>
+//                     </div>
+                    
+//                     <div>
+//                       <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide mb-3">Summary</h3>
+//                       <p className="text-purple-100/90 leading-relaxed">
+//                         {personData.summary}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 <Button
+//                   onClick={handleGenerateReport}
+//                   className="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 border border-purple-400/30 backdrop-blur-sm flex items-center justify-center space-x-2"
+//                 >
+//                   <FileText className="w-5 h-5" />
+//                   <span>Generate Report</span>
+//                 </Button>
+//               </div>
+//             </Card>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SearchPage;
+
+
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Search, ArrowLeft, FileText, User, Loader2, ShieldAlert, TrendingUp, BarChart, CalendarClock, Database } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Search, ArrowLeft, FileText, User } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { API_BASE_URL } from "@/config";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-
-// --- Helper Functions for Dynamic Styling ---
-
-const getRiskColor = (score) => {
-    if (score >= 7) return 'text-red-400';
-    if (score >= 4) return 'text-yellow-400';
-    return 'text-green-400';
-};
-
-const getSentimentColor = (score) => {
-    if (score > 0.1) return 'text-green-400';
-    if (score < -0.1) return 'text-red-400';
-    return 'text-gray-400';
-};
-
-const getSourceColor = (source) => {
-    switch (source) {
-        case 'LinkedIn': return 'bg-blue-500';
-        case 'Case/News': return 'bg-amber-500';
-        case 'Reddit': return 'bg-orange-500';
-        case 'Wikipedia': return 'bg-gray-400';
-        case 'Business': return 'bg-teal-500';
-        case 'Academic': return 'bg-indigo-500';
-        default: return 'bg-purple-500';
-    }
-}
-
 
 const SearchPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [formData, setFormData] = useState({ name: '', city: '', extraTerms: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    city: '',
+    extraTerms: ''
+  });
   const [isSearching, setIsSearching] = useState(false);
   const [hasResults, setHasResults] = useState(false);
   const [personData, setPersonData] = useState(null);
   const [currentQuote, setCurrentQuote] = useState(0);
   const [progress, setProgress] = useState({ percentage: 0, stage: '', status: 'idle' });
-  const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
 
   const osintQuotes = [
     "Information is the currency of the digital age.",
-    "Uncovering the unseen, one data point at a time.",
+    "In data we trust, in ethics we must.",
     "Intelligence gathering with moral boundaries.",
     "Knowledge is power, responsibility is wisdom.",
     "The art of finding needles in digital haystacks.",
-    "Connecting the dots in a world of data."
+    "Privacy and transparency in perfect balance."
   ];
 
-  useEffect(() => {
-    let quoteInterval;
-    if (isSearching) {
-        quoteInterval = setInterval(() => {
-            setCurrentQuote((prev) => (prev + 1) % osintQuotes.length);
-        }, 2500);
-    }
-    return () => clearInterval(quoteInterval);
-  }, [isSearching]);
-  
-  useEffect(() => {
-    if (personData) {
-      console.log("--- Full Backend Response ---");
-      console.log(personData);
-    }
-  }, [personData]);
-
-
-  // --- API Interaction Logic ---
-
-  const pollProgress = (searchId) => {
+  const pollProgress = async (searchId) => {
     const pollInterval = setInterval(async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/progress/${searchId}`);
-        if (!response.ok) throw new Error(`Server responded with status: ${response.status}`);
-        
         const progressData = await response.json();
+        
         setProgress(progressData);
         
         if (progressData.status === 'completed') {
@@ -91,28 +330,46 @@ const SearchPage = () => {
           setIsSearching(false);
           setHasResults(true);
           setPersonData(progressData.result);
-          toast({ title: "Search Completed", description: `Successfully found information for ${formData.name}` });
+          
+          toast({
+            title: "Search Completed",
+            description: `Successfully found information for ${formData.name}`
+          });
         } else if (progressData.status === 'error') {
           clearInterval(pollInterval);
           setIsSearching(false);
           setProgress({ ...progressData, percentage: 0 });
-          toast({ title: "Search Failed", description: progressData.error || "An unknown error occurred.", variant: "destructive" });
+          
+          toast({
+            title: "Search Failed",
+            description: progressData.error,
+            variant: "destructive"
+          });
         }
       } catch (error) {
         clearInterval(pollInterval);
         setIsSearching(false);
         setProgress({ percentage: 0, stage: 'Connection error', status: 'error' });
-        toast({ title: "Connection Error", description: "Unable to connect to the server.", variant: "destructive" });
+        
+        toast({
+          title: "Connection Error",
+          description: "Unable to connect to server",
+          variant: "destructive"
+        });
       }
-    }, 1000);
+    }, 500); // Poll every 500ms
   };
 
   const handleSearch = async () => {
     setIsSearching(true);
     setHasResults(false);
-    setPersonData(null);
-    setProgress({ percentage: 0, stage: 'Initiating search...', status: 'running' });
+    setProgress({ percentage: 0, stage: 'Starting search...', status: 'running' });
     
+    // Quote rotation during search
+    const quoteInterval = setInterval(() => {
+      setCurrentQuote((prev) => (prev + 1) % osintQuotes.length);
+    }, 2000);
+
     try {
       const response = await fetch(`${API_BASE_URL}/osint`, {
         method: 'POST',
@@ -121,210 +378,250 @@ const SearchPage = () => {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({error: "An unknown server error occurred."}));
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
+      
       if (data.searchId) {
+        // Start polling for progress
         pollProgress(data.searchId);
-      } else {
-        throw new Error("Did not receive a valid search ID from the server.");
       }
       
     } catch (error) {
+      clearInterval(quoteInterval);
       setIsSearching(false);
       setProgress({ percentage: 0, stage: 'Search failed', status: 'error' });
-      toast({ title: "Search Failed", description: error.message, variant: "destructive" });
+      
+      toast({
+        title: "Search Failed",
+        description: `Unable to retrieve information: ${error.message}`,
+        variant: "destructive"
+      });
+    }
+    
+    // Clear quote interval when search is done
+    setTimeout(() => clearInterval(quoteInterval), 30000); // Cleanup after 30 seconds max
+  };
+
+  const handleGenerateReport = async () => {
+    if (!personData) {
+      toast({
+        title: "No Data Available",
+        description: "Please perform a search first to generate a report.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/generate-report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ personData })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      toast({
+        title: "Report Generated",
+        description: `Report saved as: ${data.reportPath}`
+      });
+      
+    } catch (error) {
+      toast({
+        title: "Report Generation Failed",
+        description: `Unable to generate report: ${error.message}`,
+        variant: "destructive"
+      });
     }
   };
 
-  const startNewSearch = () => {
-    setHasResults(false);
-    setPersonData(null);
-    setFormData({ name: '', city: '', extraTerms: '' });
-  };
-
-  // --- Data for Chart ---
-  const chartData = personData?.sourceAnalysis?.map(source => ({
-    subject: source.name,
-    A: source.count,
-    fullMark: Math.max(...personData.sourceAnalysis.map(s => s.count), 0) + 5,
-  })) || [];
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden p-4 sm:p-8 font-sans">
-      <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `radial-gradient(circle at center, rgba(167, 139, 250, 0.3), transparent 60%), linear-gradient(rgba(147, 51, 234, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(147, 51, 234, 0.1) 1px, transparent 1px)`, backgroundSize: '100% 100%, 40px 40px, 40px 40px' }} />
-        {!hasResults && (
-          <div className="absolute top-6 left-6 z-20">
-            <Button onClick={() => navigate('/')} className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 hover:bg-gray-800/60 text-purple-200">
-              <ArrowLeft className="w-5 h-5 mr-2" />Back to Home
-            </Button>
-          </div>
-        )}
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Purple Grid Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div 
+          className="w-full h-full bg-repeat opacity-40"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(147, 51, 234, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(147, 51, 234, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }}
+        />
+      </div>
 
+      {/* Animated Background Nodes */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-20 w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-60"></div>
+        <div className="absolute top-40 right-32 w-1 h-1 bg-purple-300 rounded-full animate-ping opacity-40"></div>
+        <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse opacity-50"></div>
+        <div className="absolute top-60 left-1/2 w-1 h-1 bg-purple-400 rounded-full animate-ping opacity-30"></div>
+        <div className="absolute bottom-20 right-20 w-2 h-2 bg-purple-300 rounded-full animate-pulse opacity-40"></div>
+      </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-full">
-        <AnimatePresence mode="wait">
+      {/* Back Button */}
+      <div className="absolute top-8 left-8 z-10">
+        <Button
+          onClick={() => navigate('/')}
+          className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 hover:bg-gray-800/60 text-purple-200"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Home
+        </Button>
+      </div>
+
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <div className="w-full max-w-2xl space-y-8">
           
-          {/* --- SEARCH VIEW --- */}
-          {!isSearching && !hasResults && (
-            <motion.div key="search" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-4xl">
-              <Card className="bg-gray-900/70 backdrop-blur-md border border-purple-400/30 p-12 shadow-2xl shadow-purple-500/10">
-                <CardHeader className="text-center p-0 mb-8">
-                  <h1 className="text-5xl font-bold text-purple-300">OSINT Intelligence Terminal</h1>
-                  <p className="text-purple-200/70 text-xl mt-3">Enter target parameters to begin investigation</p>
-                </CardHeader>
-                <CardContent className="p-0 space-y-8">
-                  <div><Label htmlFor="name" className="text-purple-200 mb-3 block text-lg">Full Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-gray-800/60 border-purple-400/40 text-purple-100 focus:border-purple-400 p-4 text-xl" placeholder="e.g., John Doe"/></div>
-                  <div><Label htmlFor="city" className="text-purple-200 mb-3 block text-lg">City / Region</Label><Input id="city" value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} className="bg-gray-800/60 border-purple-400/40 text-purple-100 focus:border-purple-400 p-4 text-xl" placeholder="e.g., New York"/></div>
-                  <div><Label htmlFor="extraTerms" className="text-purple-200 mb-3 block text-lg">Additional Keywords</Label><Input id="extraTerms" value={formData.extraTerms} onChange={(e) => setFormData({...formData, extraTerms: e.target.value})} className="bg-gray-800/60 border-purple-400/40 text-purple-100 focus:border-purple-400 p-4 text-xl" placeholder="e.g., CEO, TechCorp, lawsuit"/></div>
-                  <Button onClick={handleSearch} disabled={!formData.name} className="w-full !mt-10 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white font-bold py-4 text-xl rounded-lg"><Search className="w-6 h-6 mr-3" />Initiate Search</Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+          {/* Search Form */}
+          <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+            <div className="space-y-6">
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-purple-400 glow-text-purple mb-2">OSINT Search</h1>
+                <p className="text-purple-200/70">Enter search parameters below</p>
+              </div>
 
-          {/* --- LOADING VIEW --- */}
-          {isSearching && (
-            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-2xl">
-              <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8 text-center">
-                <motion.div key={currentQuote} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="text-purple-200 text-lg italic mb-4">"{osintQuotes[currentQuote]}"</motion.div>
-                <Loader2 className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
-                <p className="text-purple-300/80 mb-6">Processing your request...</p>
-                {progress.stage && (
-                  <div className="space-y-3 text-left"><div className="flex justify-between items-center text-sm"><span className="text-purple-200">{progress.stage}</span><span className="text-purple-400 font-bold">{Math.round(progress.percentage)}%</span></div><div className="w-full bg-gray-800/60 rounded-full h-2.5"><motion.div className="h-2.5 rounded-full bg-gradient-to-r from-purple-500 to-violet-600" animate={{ width: `${progress.percentage}%` }}/></div></div>
-                )}
-              </Card>
-            </motion.div>
-          )}
+              {/* Disclaimer */}
+              <div className="bg-red-900/20 border border-red-500/30 p-4 rounded-lg backdrop-blur-sm">
+                <p className="text-red-300 text-sm">
+                  <strong>Disclaimer:</strong> Do not use this tool for stalking or illegal purposes.
+                </p>
+              </div>
 
-          {/* --- RESULTS VIEW --- */}
-          {hasResults && personData && (
-            <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-7xl">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <div className="lg:col-span-2 space-y-8">
-                  <Card className="bg-gray-900/70 backdrop-blur-md border border-purple-400/30">
-                    <CardHeader>
-                      <CardTitle className="flex items-center text-3xl text-purple-300"><User className="w-8 h-8 mr-4" />{personData.name}</CardTitle>
-                      <CardDescription className="text-purple-200/60">Intelligence Dossier | Location Context: {personData.location}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Card className="bg-black/20 p-4 border-purple-400/20"><CardHeader className="p-0 flex flex-row items-center justify-between"><CardTitle className="text-base text-purple-200/80">Risk Score</CardTitle><ShieldAlert className="w-5 h-5 text-purple-400"/></CardHeader><CardContent className="p-0 mt-2"><p className={`text-5xl font-bold ${getRiskColor(personData.riskAnalysis?.riskScore)}`}>{personData.riskAnalysis?.riskScore}/10</p><p className="text-xs text-gray-400 mt-1">{personData.riskAnalysis?.riskJustification}</p></CardContent></Card>
-                        <Card className="bg-black/20 p-4 border-purple-400/20"><CardHeader className="p-0 flex flex-row items-center justify-between"><CardTitle className="text-base text-purple-200/80">Public Sentiment</CardTitle><TrendingUp className="w-5 h-5 text-purple-400"/></CardHeader><CardContent className="p-0 mt-2"><p className={`text-5xl font-bold ${getSentimentColor(personData.riskAnalysis?.sentimentScore)}`}>{personData.riskAnalysis?.sentimentScore.toFixed(2)}</p><p className="text-xs text-gray-400 mt-1">{personData.riskAnalysis?.sentimentJustification}</p></CardContent></Card>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-purple-200/70 text-sm">AI-Generated Summary</h4>
-                        <motion.div 
-                          className="text-purple-100/90 leading-relaxed bg-black/20 p-4 rounded-md border border-purple-400/20 text-base overflow-hidden"
-                        >
-                          <p><strong>Executive Summary:</strong> {personData.short_summary}</p>
-                          <AnimatePresence>
-                            {isSummaryExpanded && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                animate={{ opacity: 1, height: 'auto', marginTop: '16px' }}
-                                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                transition={{ duration: 0.4, ease: "easeInOut" }}
-                              >
-                                <p><strong>Detailed Analysis:</strong> {personData.detailed_summary}</p>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                        <Button variant="link" onClick={() => setIsSummaryExpanded(!isSummaryExpanded)} className="text-purple-300 p-0 h-auto">
-                          {isSummaryExpanded ? 'Show Less' : 'Show Detailed Analysis...'}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-900/70 backdrop-blur-md border border-purple-400/30">
-                      <CardHeader>
-                          <CardTitle className="flex items-center text-2xl text-purple-300"><CalendarClock className="w-6 h-6 mr-3" />Evidence Timeline</CardTitle>
-                          <CardDescription className="text-purple-200/60">Chronological events extracted from data sources.</CardDescription>
-                      </CardHeader>
-                      <CardContent className="relative pl-6">
-                          {personData.timelineEvents && personData.timelineEvents.length > 0 ? (
-                              <>
-                                  <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-purple-400/30"></div>
-                                  <div className="space-y-8">
-                                      {personData.timelineEvents.map((event, index) => (
-                                          <div key={index} className="relative flex items-start">
-                                              <div className="absolute left-0 top-1.5 flex items-center justify-center w-5 h-5 bg-gray-800 rounded-full border-2 border-purple-400">
-                                                  <div className={`w-2 h-2 rounded-full ${getSourceColor(event.source)}`}></div>
-                                              </div>
-                                              <div className="ml-12">
-                                                  <p className="font-bold text-purple-200">{event.date}</p>
-                                                  <p className="text-purple-100/90">{event.title}</p>
-                                                  <p className={`text-xs font-semibold px-2 py-0.5 mt-1 inline-block rounded-full text-white ${getSourceColor(event.source)}`}>{event.source}</p>
-                                              </div>
-                                          </div>
-                                      ))}
-                                  </div>
-                              </>
-                          ) : (
-                              <div className="flex items-center justify-center h-24 text-center">
-                                  <p className="text-purple-200/70">No chronological events could be extracted from the data sources.</p>
-                              </div>
-                          )}
-                      </CardContent>
-                  </Card>
-
-                  <Card className="bg-gray-900/70 backdrop-blur-md border border-purple-400/30">
-                      <CardHeader>
-                          <CardTitle className="flex items-center text-2xl text-purple-300"><Database className="w-6 h-6 mr-3" />Raw Intelligence Data</CardTitle>
-                          <CardDescription className="text-purple-200/60">The complete list of data points gathered for this search.</CardDescription>
-                      </CardHeader>
-                      <CardContent className="max-h-96 overflow-y-auto space-y-4 pr-4">
-                          {personData.raw_data && personData.raw_data.length > 0 ? (
-                              personData.raw_data.map((item, index) => (
-                                <div key={index} className="p-4 bg-black/20 rounded-lg border border-purple-400/20">
-                                    <h3 className="font-bold text-purple-200">{item.title}</h3>
-                                    <p className="text-sm text-purple-100/80 mt-1">{item.snippet}</p>
-                                    <div className="mt-2 flex justify-between items-center">
-                                        <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-xs text-purple-400 hover:underline">View Source</a>
-                                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full text-white ${getSourceColor(item.source)}`}>{item.source}</span>
-                                    </div>
-                                </div>
-                              ))
-                          ) : (
-                            <p className="text-purple-200/70 text-center">No raw data available.</p>
-                          )}
-                      </CardContent>
-                  </Card>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="name" className="text-purple-200">Name</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+                    placeholder="Enter target name"
+                  />
                 </div>
 
-                <div className="space-y-8">
-                  <Card className="bg-gray-900/70 backdrop-blur-md border border-purple-400/30">
-                    <CardHeader>
-                      <CardTitle className="flex items-center text-xl text-purple-300"><BarChart className="w-5 h-5 mr-3" />Source Analysis</CardTitle>
-                      <CardDescription className="text-purple-200/60">Volume of findings across data sources.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ResponsiveContainer width="100%" height={300}>
-                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                          <PolarGrid stroke="rgba(167, 139, 250, 0.2)" />
-                          <PolarAngleAxis dataKey="subject" stroke="rgba(224, 204, 255, 0.7)" tickLine={false} />
-                          <PolarRadiusAxis angle={30} domain={[0, 'dataMax + 5']} tick={false} axisLine={false} />
-                          <Radar name="Findings" dataKey="A" stroke="#a78bfa" fill="#8b5cf6" fillOpacity={0.6} />
-                          <Tooltip contentStyle={{ backgroundColor: 'rgba(30, 30, 40, 0.9)', borderColor: 'rgba(136, 132, 216, 0.5)' }} />
-                          <Legend />
-                        </RadarChart>
-                      </ResponsiveContainer>
-                    </CardContent>
-                  </Card>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button onClick={startNewSearch} className="w-full bg-gray-700 hover:bg-gray-600 text-purple-200 font-bold py-3"><Search className="w-5 h-5 mr-2" />New Search</Button>
-                    <Button className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-400 hover:to-teal-500 text-white font-bold py-3"><FileText className="w-5 h-5 mr-2" />Generate Report</Button>
-                  </div>
+                <div>
+                  <Label htmlFor="city" className="text-purple-200">City</Label>
+                  <Input
+                    id="city"
+                    value={formData.city}
+                    onChange={(e) => setFormData({...formData, city: e.target.value})}
+                    className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+                    placeholder="Enter city"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="extraTerms" className="text-purple-200">Extra Terms</Label>
+                  <Input
+                    id="extraTerms"
+                    value={formData.extraTerms}
+                    onChange={(e) => setFormData({...formData, extraTerms: e.target.value})}
+                    className="bg-gray-800/60 border-purple-400/30 text-purple-100 focus:border-purple-400 backdrop-blur-sm"
+                    placeholder="Additional search terms"
+                  />
                 </div>
               </div>
-            </motion.div>
+
+              <Button
+                onClick={handleSearch}
+                disabled={isSearching || !formData.name}
+                className="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 border border-purple-400/30 backdrop-blur-sm flex items-center justify-center space-x-2"
+              >
+                <Search className="w-5 h-5" />
+                <span>{isSearching ? 'Searching...' : 'Search'}</span>
+              </Button>
+            </div>
+          </Card>
+
+          {/* Processing Quotes */}
+          {isSearching && (
+            <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+              <div className="text-center space-y-4">
+                <div className="w-12 h-12 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="text-purple-200 text-lg italic transition-all duration-1000">
+                  "{osintQuotes[currentQuote]}"
+                </p>
+                <p className="text-purple-300/70">Processing your request...</p>
+                
+                {/* Progress Bar */}
+                {progress.stage && (
+                  <div className="space-y-3 mt-6">
+                    <div className="flex justify-between items-center">
+                      <span className="text-purple-200 text-sm">{progress.stage}</span>
+                      <span className="text-purple-400 font-bold text-sm">{progress.percentage}%</span>
+                    </div>
+                    <div className="w-full bg-gray-800/60 rounded-full h-2 backdrop-blur-sm border border-purple-400/20">
+                      <motion.div
+                        className="h-2 rounded-full bg-gradient-to-r from-purple-500 to-violet-600"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress.percentage}%` }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
           )}
-        </AnimatePresence>
+
+          {/* Results */}
+          {hasResults && personData && (
+            <Card className="bg-gray-900/60 backdrop-blur-sm border border-purple-400/30 p-8">
+              <div className="space-y-6">
+                <div className="flex items-center space-x-3">
+                  <User className="w-6 h-6 text-purple-400" />
+                  <h2 className="text-2xl font-bold text-purple-400">Person Summary</h2>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-purple-400/10 border border-purple-400/30 p-6 rounded-lg backdrop-blur-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Name</h3>
+                        <p className="text-white text-lg">{personData.name}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Location</h3>
+                        <p className="text-white text-lg">{personData.location || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Confidence</h3>
+                        <p className="text-green-400 text-lg font-semibold">{personData.confidence}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide">Last Updated</h3>
+                        <p className="text-purple-100 text-lg">{personData.lastUpdated}</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-purple-200 font-semibold text-sm uppercase tracking-wide mb-3">Summary</h3>
+                      <p className="text-purple-100/90 leading-relaxed">
+                        {personData.summary}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleGenerateReport}
+                  className="w-full bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-400 hover:to-violet-500 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 border border-purple-400/30 backdrop-blur-sm flex items-center justify-center space-x-2"
+                >
+                  <FileText className="w-5 h-5" />
+                  <span>Generate Report</span>
+                </Button>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );
