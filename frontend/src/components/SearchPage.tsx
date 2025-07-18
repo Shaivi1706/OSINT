@@ -670,4 +670,3 @@ const SearchPage = () => {
 };
 //change done
 export default SearchPage;
-

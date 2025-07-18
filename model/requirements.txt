@@ -25,3 +25,5 @@ rapidfuzz==3.13.0
 # threading, json, datetime, time → standard Python libs
 
 # ⚠️ Removed FastAPI, uvicorn, python-multipart — not used in Flask
+
+python-dateutil
