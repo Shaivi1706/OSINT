@@ -26,7 +26,7 @@ A Python-powered OSINT (Open Source Intelligence) tool to search for people or e
 
 ---
 
-## 💻 How it Works
+## 💻 How it Works!
 
 1️⃣ You enter: `Name`, `City`, and optional `Extra terms`  
 2️⃣ The tool runs:
