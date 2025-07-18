@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -63,14 +62,15 @@
 
 @keyframes pulse-border-purple {
   0%, 100% { 
-    border-color: theme(colors.purple.400);
-    box-shadow: 0 0 5px theme(colors.purple.400);
+    border-color: #a855f7; /* Tailwind purple-400 */
+    box-shadow: 0 0 5px #a855f7;
   }
   50% { 
-    border-color: theme(colors.violet.300);
-    box-shadow: 0 0 15px theme(colors.violet.300);
+    border-color: #c4b5fd; /* Tailwind violet-300 */
+    box-shadow: 0 0 15px #c4b5fd;
   }
 }
+
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
